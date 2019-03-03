@@ -9,6 +9,7 @@ public class Taxiway {
 	private String name;
 	
 	private List<LatLong> nodes=new ArrayList<>();
+	private boolean centerline=false;
 	
 	
 	public void addNode(double latitude,double longitude) {
@@ -41,6 +42,15 @@ public class Taxiway {
 		
 		
 	}
+
+	public void setCenterline(boolean centerline) {
+		this.centerline=centerline;
+	}
+	
+	public boolean isCenterline() {
+		return centerline;
+	}
+	
 	
 	
 

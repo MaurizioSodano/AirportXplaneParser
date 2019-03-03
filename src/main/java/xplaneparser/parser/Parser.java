@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
+import java.util.Arrays;
 
 import javax.swing.JOptionPane;
 
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import xplaneparser.entity.Airport;
 import xplaneparser.entity.Gate;
+import xplaneparser.entity.LineTypes;
 import xplaneparser.entity.Runway;
 import xplaneparser.entity.SurfaceTypes;
 import xplaneparser.entity.Taxiway;
@@ -25,10 +27,13 @@ public class Parser {
 	public static final String METADATA_PREFIX = "1302";
 	public static final String RUNWAY_PREFIX = "100";
 	public static final String VIEWPORT_PREFIX = "14";
-	public static final String TAXIWAY_START_PREFIX = "110";
+	public static final String TAXIWAY_START_PREFIX = "120";
 	public static final String TAXIWAY_NODE_PREFIX = "111";
 	public static final String TAXIWAY_BEZIER_NODE_PREFIX = "112";
 	public static final String TAXIWAY_END_PREFIX = "113";
+	public static final String TAXIWAY_END_PREFIX2 = "114";
+	public static final String TAXIWAY_END_PREFIX3 = "115";
+	public static final String TAXIWAY_END_PREFIX4 = "116";
 	public static final String GATE_PREFIX = "1300";
 	public static final String GATE_TYPE = "GATE";
 
@@ -82,6 +87,7 @@ public class Parser {
 						parseNodeBezierTaxiway(currentTaxiway, splitData, count);
 						break;
 					case TAXIWAY_END_PREFIX:
+					case TAXIWAY_END_PREFIX3:
 						if (currentTaxiway != null) {// STARTED TAXIWAY
 							airport.taxiways.add(currentTaxiway);
 							currentTaxiway = null;
@@ -141,6 +147,10 @@ public class Parser {
 	private void parseNodeTaxiway(Taxiway currentTaxiway, String[] segments, int count) {
 		double latitude = Double.parseDouble(segments[1]);
 		double longitude = Double.parseDouble(segments[2]);
+		boolean isCenterline = Arrays.asList(segments).stream()
+			.anyMatch(token->token.equals("" +LineTypes.TaxiwayCenterline2.getValue()));
+			
+		if (isCenterline) currentTaxiway.setCenterline(true);
 		if (currentTaxiway != null) {// STARTED TAXIWAY
 			currentTaxiway.addNode(latitude, longitude);
 		} else {
@@ -152,8 +162,8 @@ public class Parser {
 		Taxiway taxiway = new Taxiway();
 		StringBuilder sb = new StringBuilder();
 		// Processes the name of the airport
-		for (int i = 4; i < segments.length; i++) {
-			if (i == 4) {
+		for (int i = 1; i < segments.length; i++) {
+			if (i == 1) {
 				sb.append(segments[i]);
 			} else {
 				sb.append(segments[i]);

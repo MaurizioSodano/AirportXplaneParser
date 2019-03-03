@@ -25,4 +25,8 @@ public class Runway {
 	public String toString() {
 		return "--Runway ID:  " + runwayId + " Length: " + length + " Surface: " + surfaceType;
 	}
+
+	public String getName() {
+		return runwayId;
+	}
 }
