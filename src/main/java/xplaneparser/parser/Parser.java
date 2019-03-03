@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import xplaneparser.entity.Airport;
+import xplaneparser.entity.Gate;
 import xplaneparser.entity.Runway;
 import xplaneparser.entity.SurfaceTypes;
 import xplaneparser.entity.Taxiway;
@@ -28,7 +29,9 @@ public class Parser {
 	public static final String TAXIWAY_NODE_PREFIX = "111";
 	public static final String TAXIWAY_BEZIER_NODE_PREFIX = "112";
 	public static final String TAXIWAY_END_PREFIX = "113";
-
+	public static final String GATE_PREFIX = "1300";
+	public static final String GATE_TYPE="GATE";
+	
 	private String xplaneFormatVersion;
 
 	private Airport airport;
@@ -87,6 +90,8 @@ public class Parser {
 						}
 
 						break;
+					case GATE_PREFIX:
+						parseGate(airport,splitData);
 					default:
 
 					}
@@ -100,11 +105,26 @@ public class Parser {
 			airport.runways.stream().map(Runway::toString).forEach(logger::info);
 
 			airport.taxiways.stream().map(Taxiway::toString).forEach(logger::info);
+			
+			airport.gates.stream().map(Gate::toString).forEach(logger::info);
 
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
 
+	}
+
+	private void parseGate(Airport airport, String[] segments) {
+		double latitude = Double.parseDouble(segments[1]);
+		double longitude = Double.parseDouble(segments[2]);
+		double heading = Double.parseDouble(segments[3]);
+		String gateType=segments[4];
+		if (GATE_TYPE.equalsIgnoreCase(gateType)) {
+			String gateName=segments[7];
+			airport.gates.add(new Gate(gateName,latitude,longitude,heading));
+		}
+		
+		
 	}
 
 	private void parseNodeTaxiway(Taxiway currentTaxiway, String[] segments, int count) {

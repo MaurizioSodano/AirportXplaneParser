@@ -47,6 +47,7 @@ public class XplaneParser extends JFrame {
 	 * Create the dialog.
 	 */
 	public XplaneParser() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 512, 264);
 		JButton btnOpen = new JButton("Open");
 		btnOpen.addActionListener(event -> fireOpenButton());

@@ -27,6 +27,8 @@ public class Airport
     public final List<Runway> runways = new ArrayList<>();
     
     public final List<Taxiway> taxiways = new ArrayList<>();
+    
+    public final List<Gate> gates = new ArrayList<>();
 
 	public boolean isFilled()
 	{
