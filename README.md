@@ -8,7 +8,7 @@ Inspired and ported in Java from https://github.com/njbrown09/XPlaneAirportParse
 compile with maven: mvn clean install
 
 Run the following 
-java -cp XPlane-1.0-SNAPSHOT-jar-with-dependencies.jar;. -Djava.security.policy=java.policy -Xms500m -Xmx2500m -Duser.language=en -Duser.region=EN xplaneparser.gui.XplaneParser 
+java -cp XPlane-1.0-SNAPSHOT-jar-with-dependencies.jar;. -Djava.security.policy=java.policy -Xms500m -Xmx2500m -Duser.language=en -Duser.region=EN simplegui.XplaneParser 
 
 ## Notes
 

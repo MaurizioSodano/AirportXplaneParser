@@ -30,22 +30,22 @@ public class Parser {
 	public static final String TAXIWAY_BEZIER_NODE_PREFIX = "112";
 	public static final String TAXIWAY_END_PREFIX = "113";
 	public static final String GATE_PREFIX = "1300";
-	public static final String GATE_TYPE="GATE";
-	
+	public static final String GATE_TYPE = "GATE";
+
 	private String xplaneFormatVersion;
 
 	private Airport airport;
 
 	private Taxiway currentTaxiway;
 
-	public void parse(String filename) {
+	public Airport parse(String filename) {
 
 		File file = new File(filename);
 		if (!file.exists()) {
 			logger.error("File {} do not exists", filename);
 			JOptionPane.showMessageDialog(null, "File " + filename + "do not exists", "Error",
 					JOptionPane.ERROR_MESSAGE);
-			return;
+			return null;
 		}
 		String readLine = null;
 		int count = 0;
@@ -79,10 +79,10 @@ public class Parser {
 						parseNodeTaxiway(currentTaxiway, splitData, count);
 						break;
 					case TAXIWAY_BEZIER_NODE_PREFIX:
-						parseNodeTaxiway(currentTaxiway, splitData, count);//TODO: parse Bezier Node
+						parseNodeBezierTaxiway(currentTaxiway, splitData, count);
 						break;
 					case TAXIWAY_END_PREFIX:
-						if (currentTaxiway != null) {//STARTED TAXIWAY
+						if (currentTaxiway != null) {// STARTED TAXIWAY
 							airport.taxiways.add(currentTaxiway);
 							currentTaxiway = null;
 						} else {
@@ -91,7 +91,7 @@ public class Parser {
 
 						break;
 					case GATE_PREFIX:
-						parseGate(airport,splitData);
+						parseGate(airport, splitData);
 					default:
 
 					}
@@ -99,17 +99,29 @@ public class Parser {
 
 			}
 
-			String message = airport.toString();
-			logger.info(message);
-
-			airport.runways.stream().map(Runway::toString).forEach(logger::info);
-
-			airport.taxiways.stream().map(Taxiway::toString).forEach(logger::info);
 			
-			airport.gates.stream().map(Gate::toString).forEach(logger::info);
+
 
 		} catch (IOException e) {
 			logger.error(e.getMessage());
+		}
+		return airport;
+
+	}
+
+	private void parseNodeBezierTaxiway(Taxiway currentTaxiway2, String[] segments, int count) {
+		/*
+		 * Shoud use this formula to interpolate: B(t)=(1-t)*P0+t*P1, t in [0,1]
+		 */
+		double startLat = Double.parseDouble(segments[1]);
+		double startLon = Double.parseDouble(segments[2]);
+		double endLat = Double.parseDouble(segments[3]);
+		double endLon = Double.parseDouble(segments[4]);
+		if (currentTaxiway != null) {// STARTED TAXIWAY
+			currentTaxiway.addNode(startLat, startLon);
+			currentTaxiway.addNode(endLat, endLon);
+		} else {
+			logger.debug("TAXIWAY not Started Properly (110 not found) line " + count);
 		}
 
 	}
@@ -118,19 +130,18 @@ public class Parser {
 		double latitude = Double.parseDouble(segments[1]);
 		double longitude = Double.parseDouble(segments[2]);
 		double heading = Double.parseDouble(segments[3]);
-		String gateType=segments[4];
+		String gateType = segments[4];
 		if (GATE_TYPE.equalsIgnoreCase(gateType)) {
-			String gateName=segments[7];
-			airport.gates.add(new Gate(gateName,latitude,longitude,heading));
+			String gateName = segments[7];
+			airport.gates.add(new Gate(gateName, latitude, longitude, heading));
 		}
-		
-		
+
 	}
 
 	private void parseNodeTaxiway(Taxiway currentTaxiway, String[] segments, int count) {
 		double latitude = Double.parseDouble(segments[1]);
 		double longitude = Double.parseDouble(segments[2]);
-		if (currentTaxiway != null) {//STARTED TAXIWAY
+		if (currentTaxiway != null) {// STARTED TAXIWAY
 			currentTaxiway.addNode(latitude, longitude);
 		} else {
 			logger.debug("TAXIWAY not Started Properly (110 not found) line " + count);

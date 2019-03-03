@@ -1,4 +1,4 @@
-package xplaneparser.gui;
+package simplegui;
 
 import java.awt.EventQueue;
 import java.awt.Image;

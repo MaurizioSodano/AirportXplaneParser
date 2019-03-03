@@ -1,4 +1,4 @@
-package xplaneparser.gui;
+package simplegui;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -18,6 +18,10 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import xplaneparser.entity.Airport;
+import xplaneparser.entity.Gate;
+import xplaneparser.entity.Runway;
+import xplaneparser.entity.Taxiway;
 import xplaneparser.parser.Parser;
 
 public class XplaneParser extends JFrame {
@@ -90,8 +94,21 @@ public class XplaneParser extends JFrame {
 
 	private void parseXplane(String filePath) {
 		Parser parser=new Parser();
-		parser.parse(filePath);
+		Airport airport = parser.parse(filePath);
+        logAirport(airport);
 		
+		
+	}
+
+	private void logAirport(Airport airport) {
+		String message = airport.toString();
+        logger.info(message);
+        
+        airport.runways.stream().map(Runway::toString).forEach(logger::info);
+
+        airport.taxiways.stream().map(Taxiway::toString).forEach(logger::info);
+        
+        airport.gates.stream().map(Gate::toString).forEach(logger::info);
 	}
 
 }
