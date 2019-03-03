@@ -2,7 +2,6 @@ package xplaneparser.parser;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
@@ -38,17 +37,9 @@ public class Parser {
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		BufferedReader bufReader = null;
-		try {
-			bufReader = new BufferedReader(new FileReader(file));
-		} catch (FileNotFoundException e1) {
-			logger.error(e1.getMessage());
-			return;
-		}
-
 		String readLine = null;
 		int count = 0;
-		try {
+		try(BufferedReader bufReader = new BufferedReader(new FileReader(file))) {
 			while ((readLine = bufReader.readLine()) != null) {
 				count++;
 				if (count == 2) {// Version
@@ -76,7 +67,8 @@ public class Parser {
 				}
 
 			}
-			logger.info(airport.toString());
+			String message =airport.toString();
+			logger.info(message);
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
@@ -108,15 +100,17 @@ public class Parser {
 		currentAiport.ICAO = segments[4]; // Set the airports ICAO
 		currentAiport.elevation = Integer.parseInt(segments[1]);
 
+		StringBuilder sb=new StringBuilder();
 		// Processes the name of the airport
 		for (int i = 5; i < segments.length; i++) {
 			if (i == 5) {
-				currentAiport.AirportName = segments[5];
+				sb.append(segments[5]);
 			} else {
-				currentAiport.AirportName += " " + segments[i];
+				sb.append( " " + segments[i]);
 			}
 		}
 
+		currentAiport.AirportName=sb.toString();
 		return currentAiport;
 	}
 

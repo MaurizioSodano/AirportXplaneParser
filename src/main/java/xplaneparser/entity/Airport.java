@@ -2,6 +2,7 @@ package xplaneparser.entity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Airport
 {
@@ -57,6 +58,12 @@ public class Airport
 	@Override
 	public String toString()
 	{
-		return "ICAO: " + ICAO + " | Name: " + AirportName + " | City: " + city + " | State: " + state + " | Country: " + country + " | Lat: " + latitude + " | Lon: " + longitude + "   | Elv: " + elevation;
+		StringBuffer sb= new StringBuffer("ICAO: " + ICAO + " | Name: " + AirportName + " | City: " + city + " | State: " + state + " | Country: " + country + " | Lat: " + latitude + " | Lon: " + longitude + "   | Elv: " + elevation);
+		String runyayDescription = runways.stream()
+			.map(Runway::toString)
+			.collect(Collectors.joining(" "));
+		sb.append(runyayDescription);
+		return sb.toString();
+		
 	}
 }

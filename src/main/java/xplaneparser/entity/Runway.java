@@ -68,6 +68,6 @@ public class Runway {
     @Override
 	public String toString()
     {
-        return "-- Length: " + length + " Surface: " + surfaceType;
+        return "--Runway ID:  "+runwayId+  " Length: " + length + " Surface: " + surfaceType;
     }
 }
