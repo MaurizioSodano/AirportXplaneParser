@@ -2,7 +2,6 @@ package xplaneparser.entity;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Airport
 {
@@ -26,11 +25,9 @@ public class Airport
 	public boolean hasProperLatLon;
 
     public final List<Runway> runways = new ArrayList<>();
+    
+    public final List<Taxiway> taxiways = new ArrayList<>();
 
-	/// <summary>
-	/// Is the airport data filled (is it done and ready for processing?)
-	/// </summary>
-	/// <returns>True if the airport has completed being parsed</returns>
 	public boolean isFilled()
 	{
 		if (ICAO == null)
@@ -59,10 +56,10 @@ public class Airport
 	public String toString()
 	{
 		StringBuffer sb= new StringBuffer("ICAO: " + ICAO + " | Name: " + AirportName + " | City: " + city + " | State: " + state + " | Country: " + country + " | Lat: " + latitude + " | Lon: " + longitude + "   | Elv: " + elevation);
-		String runyayDescription = runways.stream()
-			.map(Runway::toString)
-			.collect(Collectors.joining(" "));
-		sb.append(runyayDescription);
+//		String runyayDescription = runways.stream()
+//			.map(Runway::toString)
+//			.collect(Collectors.joining(" "));
+//		sb.append(runyayDescription);
 		return sb.toString();
 		
 	}
