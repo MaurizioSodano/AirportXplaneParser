@@ -13,7 +13,7 @@ Run the following command to print the main airport features
 java -cp XPlane-1.0-SNAPSHOT-jar-with-dependencies.jar;. -Djava.security.policy=java.policy -Xms500m -Xmx2500m -Duser.language=en -Duser.region=EN simplegui.XplaneParser 
 
 ## Notes
-Any collaboration/improvement are welcome 
+Any collaboration/improvement is welcome 
 ## ToDo
 Add missing Airport details 
 Gate and taxiway handlings
