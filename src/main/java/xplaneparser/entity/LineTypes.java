@@ -2,7 +2,16 @@ package xplaneparser.entity;
 
 import java.util.HashMap;
 import java.util.Map;
+/**
+ * 
+ * @author MaurizioSodano
+ *  some useful combinations:
+ *  1 101 Taxiway centre lines
 
+ *  6 103 Hold lines
+ *  4 103 Runway Hold Position
+ *  3 102 Tawiway Boundary , 3 Taxiway edge lines 
+ */
 public enum LineTypes
 {
 	Nothing (0),
@@ -54,5 +63,10 @@ public enum LineTypes
 
     public int getValue() {
         return value;
+    }
+    
+    public static boolean isTaxiway(String type){
+    	if (type==null || type.isEmpty()) return false;
+    	return type.equals(""+TaxiwayCenterline.getValue()) || type.equals(""+TaxiwayCenterline2.getValue());
     }
 }

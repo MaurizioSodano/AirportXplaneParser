@@ -88,6 +88,7 @@ public class Parser {
 						break;
 					case TAXIWAY_END_PREFIX:
 					case TAXIWAY_END_PREFIX3:
+					case TAXIWAY_END_PREFIX4:
 						if (currentTaxiway != null) {// STARTED TAXIWAY
 							airport.taxiways.add(currentTaxiway);
 							currentTaxiway = null;
@@ -148,7 +149,7 @@ public class Parser {
 		double latitude = Double.parseDouble(segments[1]);
 		double longitude = Double.parseDouble(segments[2]);
 		boolean isCenterline = Arrays.asList(segments).stream()
-			.anyMatch(token->token.equals("" +LineTypes.TaxiwayCenterline2.getValue()));
+			.anyMatch(LineTypes::isTaxiway);
 			
 		if (isCenterline) currentTaxiway.setCenterline(true);
 		if (currentTaxiway != null) {// STARTED TAXIWAY
