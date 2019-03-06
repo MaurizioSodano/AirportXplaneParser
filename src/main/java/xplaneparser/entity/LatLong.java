@@ -12,4 +12,12 @@ public class LatLong {
 	public String toString() {
 		return "-- Lat: " +latitude +" Long: "+longitude;
 	}
+	
+	public LatLong getMirror(LatLong coord) {
+		return getMirror(coord.latitude,coord.longitude);
+		
+	}
+	public LatLong getMirror(double latitude, double longitude) {
+		return new LatLong(2*latitude-this.latitude,2*longitude-this.longitude);
+	}
 }

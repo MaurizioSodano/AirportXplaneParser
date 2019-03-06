@@ -15,7 +15,13 @@ public class Taxiway {
 	public void addNode(double latitude,double longitude) {
 		nodes.add(new LatLong(latitude,longitude));
 	}
-	
+	public LatLong getLastNode() {
+		if (nodes.isEmpty()) return null;
+		return nodes.get(nodes.size()-1);
+	}
+	public void closeLinearLoop() {
+		nodes.add(nodes.get(0));
+	}
 	public List<LatLong> getNodes(){
 		return nodes;
 	}

@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -14,10 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import xplaneparser.entity.Airport;
 import xplaneparser.entity.Gate;
+import xplaneparser.entity.LatLong;
 import xplaneparser.entity.LineTypes;
 import xplaneparser.entity.Runway;
 import xplaneparser.entity.SurfaceTypes;
 import xplaneparser.entity.Taxiway;
+import xplaneparser.utility.BezierUtility;
 import xplaneparser.utility.LatLongDistance;
 
 public class Parser {
@@ -30,10 +33,10 @@ public class Parser {
 	public static final String TAXIWAY_START_PREFIX = "120";
 	public static final String TAXIWAY_NODE_PREFIX = "111";
 	public static final String TAXIWAY_BEZIER_NODE_PREFIX = "112";
-	public static final String TAXIWAY_END_PREFIX = "113";
-	public static final String TAXIWAY_END_PREFIX2 = "114";
-	public static final String TAXIWAY_END_PREFIX3 = "115";
-	public static final String TAXIWAY_END_PREFIX4 = "116";
+	public static final String TAXIWAY_CLOSE_LOOP_BOUNDARY_PREFIX = "113";
+	public static final String TAXIWAY_CLOSE_LOOP_BEZIER_PREFIX = "114";
+	public static final String TAXIWAY_END_LINE_PREFIX = "115";
+	public static final String TAXIWAY_END_BEZIER_PREFIX = "116";
 	public static final String GATE_PREFIX = "1300";
 	public static final String GATE_TYPE = "GATE";
 
@@ -42,6 +45,11 @@ public class Parser {
 	private Airport airport;
 
 	private Taxiway currentTaxiway;
+
+	private boolean previousIsBezier=false;
+	private LatLong controlPoint1;
+	private LatLong controlPoint2;
+
 
 	public Airport parse(String filename) {
 
@@ -79,6 +87,7 @@ public class Parser {
 
 					case TAXIWAY_START_PREFIX:
 						currentTaxiway = parseStartTaxiway(splitData);
+						previousIsBezier=false;
 						break;
 					case TAXIWAY_NODE_PREFIX:
 						parseNodeTaxiway(currentTaxiway, splitData, count);
@@ -86,9 +95,9 @@ public class Parser {
 					case TAXIWAY_BEZIER_NODE_PREFIX:
 						parseNodeBezierTaxiway(currentTaxiway, splitData, count);
 						break;
-					case TAXIWAY_END_PREFIX:
-					case TAXIWAY_END_PREFIX3:
-					case TAXIWAY_END_PREFIX4:
+					case TAXIWAY_END_LINE_PREFIX:
+					case TAXIWAY_END_BEZIER_PREFIX:
+						parseNodeTaxiway(currentTaxiway, splitData, count);
 						if (currentTaxiway != null) {// STARTED TAXIWAY
 							airport.taxiways.add(currentTaxiway);
 							currentTaxiway = null;
@@ -97,6 +106,15 @@ public class Parser {
 						}
 
 						break;
+					case TAXIWAY_CLOSE_LOOP_BOUNDARY_PREFIX:
+						parseNodeTaxiway(currentTaxiway, splitData, count);
+						if (currentTaxiway != null) {// STARTED TAXIWAY
+							currentTaxiway.closeLinearLoop();
+						} else {
+							logger.debug("TAXIWAY not ended properly (110 not found) line", count);
+						}
+						break;
+						
 					case GATE_PREFIX:
 						parseGate(airport, splitData);
 					default:
@@ -129,12 +147,29 @@ public class Parser {
 		double startLon = Double.parseDouble(segments[2]);
 		double endLat = Double.parseDouble(segments[3]);
 		double endLon = Double.parseDouble(segments[4]);
+		
 		if (currentTaxiway != null) {// STARTED TAXIWAY
+			LatLong lastNode = currentTaxiway.getLastNode();
+			if ( lastNode!=null) { //Exists a previous node
+				if (!previousIsBezier) {// create a quadratic curve with mirror control point
+					LatLong p0 = lastNode;
+					LatLong p2=new LatLong(startLat,startLon);
+					LatLong p1=new LatLong(endLat,endLon).getMirror(p2);
+					
+					List<LatLong> curvedPoints = BezierUtility.bezierQuadratic(10, p0,p1,p2);
+					curvedPoints.stream()
+						.forEach(point->currentTaxiway.addNode(point.latitude, point.longitude));
+				}else {// create a cubic curve with mirror control point
+					logger.error("CUBIC not implemented yet");
+				}
+				
+			}
 			currentTaxiway.addNode(startLat, startLon);
-			currentTaxiway.addNode(endLat, endLon);
+			controlPoint1=new LatLong(endLat, endLon);
 		} else {
 			logger.debug("TAXIWAY not Started Properly (110 not found) line " + count);
 		}
+		previousIsBezier=true;
 
 	}
 
@@ -156,9 +191,21 @@ public class Parser {
 		boolean isCenterline = Arrays.asList(segments).stream()
 			.anyMatch(LineTypes::isTaxiway);
 			
-		if (isCenterline) currentTaxiway.setCenterline(true);
+		
 		if (currentTaxiway != null) {// STARTED TAXIWAY
-			currentTaxiway.addNode(latitude, longitude);
+			if (isCenterline) currentTaxiway.setCenterline(true);
+			if (previousIsBezier) {//Previous Node was a Bezier, create a quadratic curve
+				LatLong p0 = currentTaxiway.getLastNode();
+				LatLong p1=controlPoint1;
+				LatLong p2=new LatLong(latitude,longitude);
+				List<LatLong> curvedPoints = BezierUtility.bezierQuadratic(10, p0,p1,p2);
+				curvedPoints.stream()
+					.forEach(point->currentTaxiway.addNode(point.latitude, point.longitude));
+				
+			}else {
+				currentTaxiway.addNode(latitude, longitude);
+			}
+			previousIsBezier=false;
 		} else {
 			logger.debug("TAXIWAY not Started Properly (110 not found) line " + count);
 		}
