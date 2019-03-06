@@ -116,10 +116,15 @@ public class Parser {
 
 	}
 
-	private void parseNodeBezierTaxiway(Taxiway currentTaxiway2, String[] segments, int count) {
-		/*
+	private void parseNodeBezierTaxiway(Taxiway currentTaxiway, String[] segments, int count) {
+		/**
 		 * Shoud use this formula to interpolate: B(t)=(1-t)*P0+t*P1, t in [0,1]
-		 */
+		 * P = (1−t)2P1 + 2(1−t)tP2 + t2P3
+
+			For 4 control points:
+
+		   P = (1−t)3P1 + 3(1−t)2tP2 +3(1−t)t2P3 + t3P4
+		 **/
 		double startLat = Double.parseDouble(segments[1]);
 		double startLon = Double.parseDouble(segments[2]);
 		double endLat = Double.parseDouble(segments[3]);
@@ -213,5 +218,8 @@ public class Parser {
 		currentAiport.AirportName = sb.toString();
 		return currentAiport;
 	}
+	
+	
+	
 
 }
