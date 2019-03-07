@@ -43,6 +43,7 @@ public class BezierUtility {
 	/**
 	 * 
 	 * General Bezier curve q(t) = p1(1-t)3 + 3p2t(1-t)2 + 3p3t2 + p4t3
+	 * q(t)=p0(1-t)3+3*p1(t)(1-t)2+3*p2*t2*(1-t)+p3*t3
 	 */
 	public static LatLong bezierCubic(double mu, LatLong... p) {
 		int n = p.length;
@@ -51,9 +52,9 @@ public class BezierUtility {
 			double mum1 = 1 - mu;
 			double mum13 = mum1 * mum1 * mum1;
 
-			double x = p[0].latitude * mum13 + 2 * p[1].latitude * mum1 * mum1 * mu + p[2].latitude * mu * mu * mum1
+			double x = p[0].latitude * mum13 + 3 * p[1].latitude * mum1 * mum1 * mu + 3*p[2].latitude * mu * mu * mum1
 					+ p[3].latitude * mu3;
-			double y = p[0].latitude * mum13 + 2 * p[1].longitude * mum1 * mum1 * mu + p[2].longitude * mu * mu * mum1
+			double y = p[0].longitude * mum13 + 3 * p[1].longitude * mum1 * mum1 * mu + 3*p[2].longitude * mu * mu * mum1
 					+ p[3].longitude * mu3;
 
 			return new LatLong(x, y);

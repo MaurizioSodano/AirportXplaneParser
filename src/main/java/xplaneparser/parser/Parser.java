@@ -95,8 +95,16 @@ public class Parser {
 					case TAXIWAY_BEZIER_NODE_PREFIX:
 						parseNodeBezierTaxiway(currentTaxiway, splitData, count);
 						break;
-					case TAXIWAY_END_LINE_PREFIX:
 					case TAXIWAY_END_BEZIER_PREFIX:
+						parseNodeBezierTaxiway(currentTaxiway, splitData, count);
+						if (currentTaxiway != null) {// STARTED TAXIWAY
+							airport.taxiways.add(currentTaxiway);
+							currentTaxiway = null;
+						} else {
+							logger.debug("TAXIWAY not ended properly (110 not found) line", count);
+						}
+						break;
+					case TAXIWAY_END_LINE_PREFIX:
 						parseNodeTaxiway(currentTaxiway, splitData, count);
 						if (currentTaxiway != null) {// STARTED TAXIWAY
 							airport.taxiways.add(currentTaxiway);
@@ -147,8 +155,11 @@ public class Parser {
 		double startLon = Double.parseDouble(segments[2]);
 		double endLat = Double.parseDouble(segments[3]);
 		double endLon = Double.parseDouble(segments[4]);
+		boolean isCenterline = Arrays.asList(segments).stream()
+				.anyMatch(LineTypes::isTaxiway);
 		
 		if (currentTaxiway != null) {// STARTED TAXIWAY
+			if (isCenterline) currentTaxiway.setCenterline(true);
 			LatLong lastNode = currentTaxiway.getLastNode();
 			if ( lastNode!=null) { //Exists a previous node
 				if (!previousIsBezier) {// create a quadratic curve with mirror control point
@@ -159,17 +170,30 @@ public class Parser {
 					List<LatLong> curvedPoints = BezierUtility.bezierQuadratic(10, p0,p1,p2);
 					curvedPoints.stream()
 						.forEach(point->currentTaxiway.addNode(point.latitude, point.longitude));
+					previousIsBezier=false;
 				}else {// create a cubic curve with mirror control point
-					logger.error("CUBIC not implemented yet");
+					LatLong p0 = lastNode;
+					LatLong p1=controlPoint1;
+					LatLong p3=new LatLong(startLat,startLon);
+					
+					LatLong p2=new LatLong(endLat,endLon);
+					List<LatLong> curvedPoints = BezierUtility.bezierCubic(10, p0,p1,p2,p3);
+					curvedPoints.stream()
+						.forEach(point->currentTaxiway.addNode(point.latitude, point.longitude));
+					previousIsBezier=false;
+					//logger.error("CUBIC not implemented yet");
 				}
 				
+			} else {
+				previousIsBezier=true;
 			}
 			currentTaxiway.addNode(startLat, startLon);
 			controlPoint1=new LatLong(endLat, endLon);
+			controlPoint2=new LatLong(startLat, startLon);
 		} else {
 			logger.debug("TAXIWAY not Started Properly (110 not found) line " + count);
 		}
-		previousIsBezier=true;
+		
 
 	}
 
