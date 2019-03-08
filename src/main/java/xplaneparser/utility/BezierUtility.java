@@ -10,7 +10,7 @@ import xplaneparser.entity.LatLong;
 public class BezierUtility {
 
 	public static List<LatLong> bezierQuadratic(int steps, LatLong... p) {
-		return IntStream.range(0, steps)
+		return IntStream.range(0, steps+1)
 				.mapToDouble(step -> ((double) step) / steps)
 				.mapToObj(mu -> bezierQuadratic(mu, p))
 				.collect(Collectors.toCollection(ArrayList::new));

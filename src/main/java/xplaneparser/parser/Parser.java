@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
 
@@ -46,10 +47,9 @@ public class Parser {
 
 	private Taxiway currentTaxiway;
 
-	private boolean previousIsBezier=false;
+	private boolean previousIsBezier = false;
 	private LatLong controlPoint1;
 	private LatLong controlPoint2;
-
 
 	public Airport parse(String filename) {
 
@@ -76,7 +76,7 @@ public class Parser {
 
 				if (!readLine.isEmpty()) {
 					String[] splitData = readLine.split("\\s+");
-					currentTaxiway=addLineAttribute(currentTaxiway,splitData);
+					currentTaxiway = addLineAttribute(currentTaxiway, splitData);
 					switch (splitData[0]) {
 					case AIRPORT_PREFIX: // Airport
 						airport = parseAirportLine(splitData);
@@ -87,7 +87,7 @@ public class Parser {
 
 					case TAXIWAY_START_PREFIX:
 						currentTaxiway = parseStartTaxiway(splitData);
-						previousIsBezier=false;
+						previousIsBezier = false;
 						break;
 					case TAXIWAY_NODE_PREFIX:
 						parseNodeTaxiway(currentTaxiway, splitData, count);
@@ -122,7 +122,7 @@ public class Parser {
 							logger.debug("TAXIWAY not ended properly (110 not found) line", count);
 						}
 						break;
-						
+
 					case GATE_PREFIX:
 						parseGate(airport, splitData);
 					default:
@@ -131,9 +131,6 @@ public class Parser {
 				}
 
 			}
-
-			
-
 
 		} catch (IOException e) {
 			logger.error(e.getMessage());
@@ -144,52 +141,58 @@ public class Parser {
 
 	private void parseNodeBezierTaxiway(Taxiway currentTaxiway, String[] segments, int count) {
 		/**
-		 * Shoud use this formula to interpolate: B(t)=(1-t)*P0+t*P1, t in [0,1]
-		 * P = (1−t)2P1 + 2(1−t)tP2 + t2P3
-
-			For 4 control points:
-
-		   P = (1−t)3P1 + 3(1−t)2tP2 +3(1−t)t2P3 + t3P4
+		 * Shoud use this formula to interpolate: B(t)=(1-t)*P0+t*P1, t in [0,1] P =
+		 * (1−t)2P1 + 2(1−t)tP2 + t2P3
+		 * 
+		 * For 4 control points:
+		 * 
+		 * P = (1−t)3P1 + 3(1−t)2tP2 +3(1−t)t2P3 + t3P4
 		 **/
 		double startLat = Double.parseDouble(segments[1]);
 		double startLon = Double.parseDouble(segments[2]);
 		double endLat = Double.parseDouble(segments[3]);
 		double endLon = Double.parseDouble(segments[4]);
-		
+
 		if (currentTaxiway != null) {// STARTED TAXIWAY
 			LatLong lastNode = currentTaxiway.getLastNode();
-			if ( lastNode!=null) { //Exists a previous node
-				if (!previousIsBezier) {// create a quadratic curve with mirror control point
-					LatLong p0 = lastNode;
-					LatLong p2=new LatLong(startLat,startLon);
-					LatLong p1=new LatLong(endLat,endLon).getMirror(p2);
-					
-					List<LatLong> curvedPoints = BezierUtility.bezierQuadratic(10, p0,p1,p2);
-					curvedPoints.stream()
-						.forEach(point->currentTaxiway.addNode(point.latitude, point.longitude));
-					previousIsBezier=false;
-				}else {// create a cubic curve with mirror control point
-					LatLong p0 = lastNode;
-					LatLong p1=controlPoint1;
-					LatLong p3=new LatLong(startLat,startLon);
-					
-					LatLong p2=new LatLong(endLat,endLon);
-					List<LatLong> curvedPoints = BezierUtility.bezierCubic(10, p0,p1,p2,p3);
-					curvedPoints.stream()
-						.forEach(point->currentTaxiway.addNode(point.latitude, point.longitude));
-					previousIsBezier=false;
+			if (lastNode != null) { // Exists a previous node
+				if (lastNode.latitude != startLat || lastNode.longitude != startLon) {
+					if (!previousIsBezier) {// create a quadratic curve with mirror control point
+						LatLong p0 = lastNode;
+						LatLong p2 = new LatLong(startLat, startLon);
+						LatLong p1 = new LatLong(endLat, endLon).getMirror(p2);
+
+						List<LatLong> curvedPoints = BezierUtility.bezierQuadratic(10, p0, p1, p2);
+						curvedPoints.stream().forEach(point -> currentTaxiway.addNode(point.latitude, point.longitude));
+						previousIsBezier = false;
+					} else {// create a cubic curve with mirror control point
+						LatLong p0 = lastNode;
+						LatLong p1 = controlPoint1;
+						LatLong p3 = new LatLong(startLat, startLon);
+
+						LatLong p2 = new LatLong(endLat, endLon).getMirror(p3);
+						List<LatLong> curvedPoints = BezierUtility.bezierCubic(10, p0, p1, p2, p3);
+						curvedPoints.stream().forEach(point -> currentTaxiway.addNode(point.latitude, point.longitude));
+						previousIsBezier = false;
+					}
+
+				}else {
+					currentTaxiway.addNode(startLat, startLon);
+					controlPoint1 = new LatLong(endLat, endLon);
+					controlPoint2 = new LatLong(startLat, startLon);
+					previousIsBezier = true;
 				}
-				
+
 			} else {
-				previousIsBezier=true;
+				currentTaxiway.addNode(startLat, startLon);
+				controlPoint1 = new LatLong(endLat, endLon);
+				controlPoint2 = new LatLong(startLat, startLon);
+				previousIsBezier = true;
 			}
-			currentTaxiway.addNode(startLat, startLon);
-			controlPoint1=new LatLong(endLat, endLon);
-			controlPoint2=new LatLong(startLat, startLon);
+
 		} else {
 			logger.debug("TAXIWAY not Started Properly (110 not found) line " + count);
 		}
-		
 
 	}
 
@@ -206,39 +209,36 @@ public class Parser {
 	}
 
 	private Taxiway addLineAttribute(Taxiway currentTaxiway, String[] segments) {
-		boolean isCenterline = Arrays.asList(segments).stream()
-				.anyMatch(LineTypes::isTaxiwayCenterline);
-		boolean isRunwayHoldPosition = Arrays.asList(segments).stream()
+		boolean isCenterline = Arrays.asList(segments).stream().skip(1).anyMatch(LineTypes::isTaxiwayCenterline);
+		boolean isRunwayHoldPosition = Arrays.asList(segments).stream().skip(1)
 				.anyMatch(LineTypes::isRunwayHoldPosition);
 		if (currentTaxiway != null) {// STARTED TAXIWAY
 			if (isCenterline) {
 				currentTaxiway.setCenterline(true);
-			}else if (isRunwayHoldPosition) {
+			} else if (isRunwayHoldPosition) {
 				currentTaxiway.setRunwayHold(true);
 			}
 		}
 		return currentTaxiway;
-		
+
 	}
-	
+
 	private void parseNodeTaxiway(Taxiway currentTaxiway, String[] segments, int count) {
 		double latitude = Double.parseDouble(segments[1]);
 		double longitude = Double.parseDouble(segments[2]);
 
-		
 		if (currentTaxiway != null) {// STARTED TAXIWAY
-			if (previousIsBezier) {//Previous Node was a Bezier, create a quadratic curve
+			if (previousIsBezier) {// Previous Node was a Bezier, create a quadratic curve
 				LatLong p0 = currentTaxiway.getLastNode();
-				LatLong p1=controlPoint1;
-				LatLong p2=new LatLong(latitude,longitude);
-				List<LatLong> curvedPoints = BezierUtility.bezierQuadratic(10, p0,p1,p2);
-				curvedPoints.stream()
-					.forEach(point->currentTaxiway.addNode(point.latitude, point.longitude));
-				
-			}else {
+				LatLong p1 = controlPoint1;
+				LatLong p2 = new LatLong(latitude, longitude);
+				List<LatLong> curvedPoints = BezierUtility.bezierQuadratic(10, p0, p1, p2);
+				curvedPoints.stream().forEach(point -> currentTaxiway.addNode(point.latitude, point.longitude));
+
+			} else {
 				currentTaxiway.addNode(latitude, longitude);
 			}
-			previousIsBezier=false;
+			previousIsBezier = false;
 		} else {
 			logger.debug("TAXIWAY not Started Properly (110 not found) line " + count);
 		}
@@ -246,16 +246,8 @@ public class Parser {
 
 	private Taxiway parseStartTaxiway(String[] segments) {
 		Taxiway taxiway = new Taxiway();
-		StringBuilder sb = new StringBuilder();
-		// Processes the name of the airport
-		for (int i = 1; i < segments.length; i++) {
-			if (i == 1) {
-				sb.append(segments[i]);
-			} else {
-				sb.append(segments[i]);
-			}
-		}
-		taxiway.setName(sb.toString());
+		String name = Arrays.asList(segments).stream().skip(1).collect(Collectors.joining(" "));
+		taxiway.setName(name);
 		return taxiway;
 	}
 
@@ -298,8 +290,5 @@ public class Parser {
 		currentAiport.AirportName = sb.toString();
 		return currentAiport;
 	}
-	
-	
-	
 
 }

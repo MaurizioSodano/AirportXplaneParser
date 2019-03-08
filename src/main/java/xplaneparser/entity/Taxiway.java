@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class Taxiway {
+public class Taxiway implements Comparable<Taxiway>  {
 	private static final String newLine = System.getProperty("line.separator");
 	private String name;
 	
@@ -62,6 +62,10 @@ public class Taxiway {
 	}
 	public void setRunwayHold(boolean runwayHold) {
 		this.runwayHold = runwayHold;
+	}
+	@Override
+	public int compareTo(Taxiway t) {
+		return name.compareTo(t.getName());
 	}
 	
 	
