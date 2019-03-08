@@ -65,8 +65,14 @@ public enum LineTypes
         return value;
     }
     
-    public static boolean isTaxiway(String type){
+
+    public static boolean isTaxiwayCenterline(String type){
     	if (type==null || type.isEmpty()) return false;
     	return type.equals(""+TaxiwayCenterline.getValue()) || type.equals(""+TaxiwayCenterline2.getValue());
+    }
+    
+    public static boolean isRunwayHoldPosition(String type){
+    	if (type==null || type.isEmpty()) return false;
+    	return type.equals(""+RunwayHolding.getValue()) || type.equals(""+Holding2.getValue());
     }
 }

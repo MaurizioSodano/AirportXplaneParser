@@ -10,7 +10,7 @@ public class Taxiway {
 	
 	private List<LatLong> nodes=new ArrayList<>();
 	private boolean centerline=false;
-	
+	private boolean runwayHold=false;
 	
 	public void addNode(double latitude,double longitude) {
 		nodes.add(new LatLong(latitude,longitude));
@@ -56,7 +56,13 @@ public class Taxiway {
 	public boolean isCenterline() {
 		return centerline;
 	}
-	
+
+	public boolean isRunwayHold() {
+		return runwayHold;
+	}
+	public void setRunwayHold(boolean runwayHold) {
+		this.runwayHold = runwayHold;
+	}
 	
 	
 

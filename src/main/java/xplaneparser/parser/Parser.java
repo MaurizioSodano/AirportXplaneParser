@@ -76,7 +76,7 @@ public class Parser {
 
 				if (!readLine.isEmpty()) {
 					String[] splitData = readLine.split("\\s+");
-
+					currentTaxiway=addLineAttribute(currentTaxiway,splitData);
 					switch (splitData[0]) {
 					case AIRPORT_PREFIX: // Airport
 						airport = parseAirportLine(splitData);
@@ -155,11 +155,8 @@ public class Parser {
 		double startLon = Double.parseDouble(segments[2]);
 		double endLat = Double.parseDouble(segments[3]);
 		double endLon = Double.parseDouble(segments[4]);
-		boolean isCenterline = Arrays.asList(segments).stream()
-				.anyMatch(LineTypes::isTaxiway);
 		
 		if (currentTaxiway != null) {// STARTED TAXIWAY
-			if (isCenterline) currentTaxiway.setCenterline(true);
 			LatLong lastNode = currentTaxiway.getLastNode();
 			if ( lastNode!=null) { //Exists a previous node
 				if (!previousIsBezier) {// create a quadratic curve with mirror control point
@@ -181,7 +178,6 @@ public class Parser {
 					curvedPoints.stream()
 						.forEach(point->currentTaxiway.addNode(point.latitude, point.longitude));
 					previousIsBezier=false;
-					//logger.error("CUBIC not implemented yet");
 				}
 				
 			} else {
@@ -209,15 +205,28 @@ public class Parser {
 
 	}
 
+	private Taxiway addLineAttribute(Taxiway currentTaxiway, String[] segments) {
+		boolean isCenterline = Arrays.asList(segments).stream()
+				.anyMatch(LineTypes::isTaxiwayCenterline);
+		boolean isRunwayHoldPosition = Arrays.asList(segments).stream()
+				.anyMatch(LineTypes::isRunwayHoldPosition);
+		if (currentTaxiway != null) {// STARTED TAXIWAY
+			if (isCenterline) {
+				currentTaxiway.setCenterline(true);
+			}else if (isRunwayHoldPosition) {
+				currentTaxiway.setRunwayHold(true);
+			}
+		}
+		return currentTaxiway;
+		
+	}
+	
 	private void parseNodeTaxiway(Taxiway currentTaxiway, String[] segments, int count) {
 		double latitude = Double.parseDouble(segments[1]);
 		double longitude = Double.parseDouble(segments[2]);
-		boolean isCenterline = Arrays.asList(segments).stream()
-			.anyMatch(LineTypes::isTaxiway);
-			
+
 		
 		if (currentTaxiway != null) {// STARTED TAXIWAY
-			if (isCenterline) currentTaxiway.setCenterline(true);
 			if (previousIsBezier) {//Previous Node was a Bezier, create a quadratic curve
 				LatLong p0 = currentTaxiway.getLastNode();
 				LatLong p1=controlPoint1;
