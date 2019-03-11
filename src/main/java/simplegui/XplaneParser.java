@@ -28,7 +28,8 @@ public class XplaneParser extends JFrame {
 	
 	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 	private static final String OPEN_XPLANE = "Open Xplane/Flight Gears Airport file (apt.dat)";
-
+	private static final int MAX_WIDTH = 800;
+	private static final int MAX_HEIGHT = 600;
 	/**
 	 * Launch the application.
 	 */
@@ -96,6 +97,18 @@ public class XplaneParser extends JFrame {
 		Parser parser=new Parser();
 		Airport airport = parser.parse(filePath);
         logAirport(airport);
+        
+		JFrame frame = new JFrame(airport.airportName);
+		frame.setSize(MAX_WIDTH, MAX_HEIGHT);
+		frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+		frame.setLayout(new BorderLayout());
+		PloyPane pane = new PloyPane(airport);
+		pane.setSize(MAX_WIDTH, MAX_HEIGHT);
+		frame.add(pane);
+		frame.pack();
+		frame.setLocationRelativeTo(null);
+		frame.setVisible(true);
+        
 		
 		
 	}

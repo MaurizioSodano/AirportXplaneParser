@@ -23,8 +23,8 @@ public class BezierUtility {
 			double mum1 = 1 - mu;
 			double mum12 = mum1 * mum1;
 
-			double x = p[0].latitude * mum12 + 2 * p[1].latitude * mum1 * mu + p[2].latitude * mu2;
-			double y = p[0].longitude * mum12 + 2 * p[1].longitude * mum1 * mu + p[2].longitude * mu2;
+			double x = p[0].getLatitude() * mum12 + 2 * p[1].getLatitude() * mum1 * mu + p[2].getLatitude() * mu2;
+			double y = p[0].getLongitude() * mum12 + 2 * p[1].getLongitude() * mum1 * mu + p[2].getLongitude() * mu2;
 
 			return new LatLong(x, y);
 		} else {
@@ -52,10 +52,10 @@ public class BezierUtility {
 			double mum1 = 1 - mu;
 			double mum13 = mum1 * mum1 * mum1;
 
-			double x = p[0].latitude * mum13 + 3 * p[1].latitude * mum1 * mum1 * mu + 3*p[2].latitude * mu * mu * mum1
-					+ p[3].latitude * mu3;
-			double y = p[0].longitude * mum13 + 3 * p[1].longitude * mum1 * mum1 * mu + 3*p[2].longitude * mu * mu * mum1
-					+ p[3].longitude * mu3;
+			double x = p[0].getLatitude() * mum13 + 3 * p[1].getLatitude() * mum1 * mum1 * mu + 3*p[2].getLatitude() * mu * mu * mum1
+					+ p[3].getLatitude() * mu3;
+			double y = p[0].getLongitude() * mum13 + 3 * p[1].getLongitude() * mum1 * mum1 * mu + 3*p[2].getLongitude() * mu * mu * mum1
+					+ p[3].getLongitude() * mu3;
 
 			return new LatLong(x, y);
 		} else {

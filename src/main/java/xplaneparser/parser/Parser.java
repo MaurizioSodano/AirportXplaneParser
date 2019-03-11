@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import javax.swing.JOptionPane;
@@ -25,6 +26,8 @@ import xplaneparser.utility.BezierUtility;
 import xplaneparser.utility.LatLongDistance;
 
 public class Parser {
+	private static final String POINT_PREFIX = "TP_";
+
 	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
 	public static final String AIRPORT_PREFIX = "1";
@@ -135,8 +138,39 @@ public class Parser {
 		} catch (IOException e) {
 			logger.error(e.getMessage());
 		}
+		
+		createCenterlinesTaxipoints();
 		return airport;
 
+	}
+
+	/**
+	 * Create Points From Taxiways, that are not too close
+	 * and assign a unique name
+	 */
+	private void createCenterlinesTaxipoints() {
+	       AtomicInteger atomicInteger = new AtomicInteger(0);
+	        
+			airport.taxiways.stream()
+				.filter(xplaneparser.entity.Taxiway::isCenterline)
+				.sorted()
+				.forEach(taxiway -> {
+
+				taxiway.getNodes().stream().forEach(node -> {
+					LatLong tmpTaxipoint = new LatLong(node.getLatitude(), node.getLongitude());
+					
+					
+					boolean pointExists = airport.taxipoints.values().stream()
+						.anyMatch(point->tmpTaxipoint.isCloseTo(point.getLatitude(),point.getLongitude()));
+					
+					if (!pointExists) {
+						atomicInteger.getAndIncrement();
+						String name=POINT_PREFIX+atomicInteger.get();
+						airport.taxipoints.put(name, tmpTaxipoint);
+					}
+				});
+			});
+		
 	}
 
 	private void parseNodeBezierTaxiway(Taxiway currentTaxiway, String[] segments, int count) {
@@ -156,14 +190,14 @@ public class Parser {
 		if (currentTaxiway != null) {// STARTED TAXIWAY
 			LatLong lastNode = currentTaxiway.getLastNode();
 			if (lastNode != null) { // Exists a previous node
-				if (lastNode.latitude != startLat || lastNode.longitude != startLon) {
+				if (lastNode.getLatitude() != startLat || lastNode.getLongitude() != startLon) {
 					if (!previousIsBezier) {// create a quadratic curve with mirror control point
 						LatLong p0 = lastNode;
 						LatLong p2 = new LatLong(startLat, startLon);
 						LatLong p1 = new LatLong(endLat, endLon).getMirror(p2);
 
 						List<LatLong> curvedPoints = BezierUtility.bezierQuadratic(10, p0, p1, p2);
-						curvedPoints.stream().forEach(point -> currentTaxiway.addNode(point.latitude, point.longitude));
+						curvedPoints.stream().forEach(point -> currentTaxiway.addNode(point.getLatitude(), point.getLongitude()));
 						previousIsBezier = false;
 					} else {// create a cubic curve with mirror control point
 						LatLong p0 = lastNode;
@@ -172,7 +206,7 @@ public class Parser {
 
 						LatLong p2 = new LatLong(endLat, endLon).getMirror(p3);
 						List<LatLong> curvedPoints = BezierUtility.bezierCubic(10, p0, p1, p2, p3);
-						curvedPoints.stream().forEach(point -> currentTaxiway.addNode(point.latitude, point.longitude));
+						curvedPoints.stream().forEach(point -> currentTaxiway.addNode(point.getLatitude(), point.getLongitude()));
 						previousIsBezier = false;
 					}
 
@@ -233,7 +267,7 @@ public class Parser {
 				LatLong p1 = controlPoint1;
 				LatLong p2 = new LatLong(latitude, longitude);
 				List<LatLong> curvedPoints = BezierUtility.bezierQuadratic(10, p0, p1, p2);
-				curvedPoints.stream().forEach(point -> currentTaxiway.addNode(point.latitude, point.longitude));
+				curvedPoints.stream().forEach(point -> currentTaxiway.addNode(point.getLatitude(), point.getLongitude()));
 
 			} else {
 				currentTaxiway.addNode(latitude, longitude);
@@ -287,7 +321,7 @@ public class Parser {
 			}
 		}
 
-		currentAiport.AirportName = sb.toString();
+		currentAiport.airportName = sb.toString();
 		return currentAiport;
 	}
 

@@ -1,41 +1,36 @@
 package xplaneparser.entity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Airport
 {
 	
 	public String ICAO;
-
 	public String country;
-
     public String state;
-
 	public String city;
-
-	public String AirportName;
-
+	public String airportName;
 	public double latitude;
-
 	public double longitude;
-
 	public int elevation;
-
 	public boolean hasProperLatLon;
 
     public final List<Runway> runways = new ArrayList<>();
-    
     public final List<Taxiway> taxiways = new ArrayList<>();
-    
     public final List<Gate> gates = new ArrayList<>();
 
+    public final Map<String, LatLong> taxipoints=new HashMap<>();
+    
+    
 	public boolean isFilled()
 	{
 		if (ICAO == null)
 			return false;
 
-		if (AirportName == null)
+		if (airportName == null)
 			return false;
 
 		if (Double.isNaN(latitude)) {
@@ -57,7 +52,7 @@ public class Airport
 	@Override
 	public String toString()
 	{
-		StringBuffer sb= new StringBuffer("ICAO: " + ICAO + " | Name: " + AirportName + " | City: " + city + " | State: " + state + " | Country: " + country + " | Lat: " + latitude + " | Lon: " + longitude + "   | Elv: " + elevation);
+		StringBuffer sb= new StringBuffer("ICAO: " + ICAO + " | Name: " + airportName + " | City: " + city + " | State: " + state + " | Country: " + country + " | Lat: " + latitude + " | Lon: " + longitude + "   | Elv: " + elevation);
 //		String runyayDescription = runways.stream()
 //			.map(Runway::toString)
 //			.collect(Collectors.joining(" "));

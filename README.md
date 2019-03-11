@@ -14,6 +14,13 @@ java -cp XPlane-1.0-SNAPSHOT-jar-with-dependencies.jar;. -Djava.security.policy=
 
 ## Notes
 Any collaboration/improvement is welcome 
+
+#Features
+Parses the following items:
+	1. Runway
+	2. Taxiway centerlines
+	3. Gates
+	4. Taxiway Edges
+It display it in a simple 2D panel
 ## ToDo
-Add missing Airport details 
-Gate and taxiway handlings
+
