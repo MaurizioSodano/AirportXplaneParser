@@ -22,7 +22,7 @@ Parses the following items:
 3. Gates
 4. Taxiway Edges
 
-It display it in a simple 2D panel
+It displays it in a simple 2D panel
 
 ## ToDo
 
