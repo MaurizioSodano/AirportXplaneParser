@@ -1,0 +1,2 @@
+java -cp ..\lib\AirportSimpleGui-1.1-SNAPSHOT-jar-with-dependencies.jar;. -Djava.security.policy=java.policy -Xms500m -Xmx2500m -Duser.language=en -Duser.region=EN ms.xplaneparser.simplegui.XplaneParser
+pause

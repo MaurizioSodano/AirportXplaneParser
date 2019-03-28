@@ -4,22 +4,22 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<name>AirportParser</name>
-	<artifactId>XPlane-parent</artifactId>
-	<groupId>ms.xplaneparser</groupId>
-	<version>1.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
+
+	<parent>
+		<artifactId>XPlane-parent</artifactId>
+		<groupId>ms.xplaneparser</groupId>
+		<version>1.1-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+	</parent>
+	
+	<name>XPlaneParser</name>
+	<artifactId>XPlaneParser</artifactId>
+	<description>Utility package for Xplane Parser</description>
 
 	<properties>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<project.build.sourceEncoding>iso-8859-1</project.build.sourceEncoding>
 	</properties>
-	<modules>
-		<module>assemblymodule</module>
-		<module>XPlaneParser</module>
-		<module>AirportSimpleGui</module>
-	</modules>
+	<build>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -39,6 +39,4 @@
 			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
-
-
 </project>

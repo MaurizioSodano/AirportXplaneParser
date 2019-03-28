@@ -8,9 +8,13 @@ It could be used to parse an Xplane airport file (apt.dat)
 ## Instructions
 compile with maven: mvn clean install
 
-Run the following command to print the main airport features
- 
-java -cp XPlane-1.0-SNAPSHOT-jar-with-dependencies.jar;. -Djava.security.policy=java.policy -Xms500m -Xmx2500m -Duser.language=en -Duser.region=EN simplegui.XplaneParser 
+unzip the generated assemblymodule\target\assemblymodule-1.1-SNAPSHOT-assembly.zip 
+
+run the scripts\launcher.bat 
+
+Click Open and choose LIRN\apt.dat file
+
+
 
 ## Notes
 Any collaboration/improvement is welcome 
