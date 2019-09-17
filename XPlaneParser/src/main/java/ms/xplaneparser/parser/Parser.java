@@ -34,6 +34,7 @@ public class Parser {
     public static final String METADATA_PREFIX = "1302";
     public static final String RUNWAY_PREFIX = "100";
     public static final String VIEWPORT_PREFIX = "14";
+	public static final String TAXIWAY_START_PREFIX_ARBITRARY = "110";//Skipped because not centerline
     public static final String TAXIWAY_START_PREFIX = "120";
     public static final String TAXIWAY_NODE_PREFIX = "111";
     public static final String TAXIWAY_BEZIER_NODE_PREFIX = "112";
