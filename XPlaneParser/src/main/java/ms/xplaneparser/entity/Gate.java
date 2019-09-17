@@ -1,5 +1,9 @@
 package ms.xplaneparser.entity;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter @Setter
 public class Gate {
 	private String name;
 	private double latitude;
@@ -14,40 +18,9 @@ public class Gate {
 	}
 
 
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public double getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
-	}
-
-	public double getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
-	}
-
 	@Override
 	public String toString() {
 		return "GATE : " +name+ " Lat: "+latitude+ " Long: "+longitude;
 	}
 
-	public double getHeading() {
-		return heading;
-	}
-
-	public void setHeading(double heading) {
-		this.heading = heading;
-	}
 }

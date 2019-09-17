@@ -1,25 +1,17 @@
 package ms.xplaneparser.entity;
 
-public class Runway {
+import lombok.AllArgsConstructor;
 
-	public SurfaceTypes surfaceType;
+@AllArgsConstructor
+public class Runway {
 	public double startLat;
 	public double startLon;
 	public double endLat;
 	public double endLon;
 	public double length;
 	public String runwayId;
+	public SurfaceTypes surfaceType;
 
-	public Runway(double startLat, double startLon, double endLat, double endLon, double length, String runwayId,
-			SurfaceTypes surfaceType) {
-		this.startLat = startLat;
-		this.startLon = startLon;
-		this.endLat = endLat;
-		this.endLon = endLon;
-		this.length = length;
-		this.runwayId = runwayId;
-		this.surfaceType = surfaceType;
-	}
 
 	@Override
 	public String toString() {

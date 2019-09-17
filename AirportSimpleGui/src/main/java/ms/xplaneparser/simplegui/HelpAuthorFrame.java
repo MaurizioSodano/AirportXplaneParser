@@ -18,22 +18,18 @@ import org.slf4j.LoggerFactory;
 public class HelpAuthorFrame extends JFrame {
 
 	private static final String SCENARIO_LOGO_ICON = "/images/Map_icon.png";
-	private JPanel contentPane;
 	private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass().getSimpleName());
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					HelpAuthorFrame frame = new HelpAuthorFrame();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					logger.error(e.getMessage());
-				}
+		EventQueue.invokeLater(() -> {
+			try {
+				HelpAuthorFrame frame = new HelpAuthorFrame();
+				frame.setVisible(true);
+			} catch (Exception e) {
+				logger.error(e.getMessage());
 			}
 		});
 	}
@@ -52,7 +48,7 @@ public class HelpAuthorFrame extends JFrame {
 		String title = "About the author";
 		setTitle(title);
 
-		contentPane = new JPanel();
+		JPanel contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
 		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));

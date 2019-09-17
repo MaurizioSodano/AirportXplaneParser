@@ -1,5 +1,7 @@
 package ms.xplaneparser.entity;
 
+import lombok.Getter;
+
 import java.util.HashMap;
 import java.util.Map;
 /**
@@ -14,40 +16,40 @@ import java.util.Map;
  */
 public enum LineTypes
 {
-	Nothing (0),
-	TaxiwayCenterline( 1),
-    Boundary ( 2),
-    TaxiwayEdgeline(3),
-    RunwayHolding( 4),
-    Holding (5),
-    ILSHolding ( 6),
-    SafetyTaxiwayCenterline(7),
-    Queueing ( 8),
-    Queueing2 ( 9),
-    Roadway1(20),
-    Roadway2(21),
-    Roadway3(22),
-    ConcreteSurface1(51),
-    ConcreteSurface2(52),
-    ConcreteSurface3(53),
-    ConcreteSurface4(54),
-    ConcreteSurface5(55),
-    ConcreteSurface6(56),
-    ConcreteSurface7(57),
-    ConcreteSurface8(58),
-    ConcreteSurface9(59),
-    TaxiwayCenterline2 (101),
-    TaxiwayEdge2 (102),
-    Holding2(103),
-    RunwayHolding2(104),
-    SafetyTaxiwayCenterline2(105),
-    Dangerous(105),
-    Undefined ( 999);
+	NOTHING(0),
+	TAXIWAY_CENTERLINE( 1),
+    BOUNDARY( 2),
+    TAXIWAY_EDGELINE(3),
+    RUNWAY_HOLDING( 4),
+    HOLDING(5),
+    ILS_HOLDING( 6),
+    SAFETY_TAXIWAY_CENTERLINE(7),
+    QUEUEING( 8),
+    QUEUEING_2( 9),
+    ROADWAY_1(20),
+    ROADWAY_2(21),
+    ROADWAY_3(22),
+    CONCRETE_SURFACE_1(51),
+    CONCRETE_SURFACE_2(52),
+    CONCRETE_SURFACE_3(53),
+    CONCRETE_SURFACE_4(54),
+    CONCRETE_SURFACE_5(55),
+    CONCRETE_SURFACE_6(56),
+    CONCRETE_SURFACE_7(57),
+    CONCRETE_SURFACE_8(58),
+    CONCRETE_SURFACE_9(59),
+    TAXIWAY_CENTERLINE_2(101),
+    TAXIWAY_EDGE_2(102),
+    HOLDING_2(103),
+    RUNWAY_HOLDING_2(104),
+    SAFETY_TAXIWAY_CENTERLINE_2(105),
+    DANGEROUS(105),
+    UNDEFINED( 999);
     
-    private int value;
+    @Getter private int value;
     private static Map<Integer,LineTypes> map = new HashMap<>();
 
-    private LineTypes(int value) {
+    LineTypes(int value) {
         this.value = value;
     }
 
@@ -61,18 +63,14 @@ public enum LineTypes
         return map.get(pageType);
     }
 
-    public int getValue() {
-        return value;
-    }
-    
 
-    public static boolean isTaxiwayCenterline(String type){
+    public static boolean isTaxiwayCenterLine(String type){
     	if (type==null || type.isEmpty()) return false;
-    	return type.equals(""+TaxiwayCenterline.getValue()) || type.equals(""+TaxiwayCenterline2.getValue());
+    	return type.equals(""+ TAXIWAY_CENTERLINE.getValue()) || type.equals(""+ TAXIWAY_CENTERLINE_2.getValue());
     }
     
     public static boolean isRunwayHoldPosition(String type){
     	if (type==null || type.isEmpty()) return false;
-    	return type.equals(""+RunwayHolding.getValue()) || type.equals(""+Holding2.getValue());
+    	return type.equals(""+ RUNWAY_HOLDING.getValue()) || type.equals(""+ HOLDING_2.getValue());
     }
 }

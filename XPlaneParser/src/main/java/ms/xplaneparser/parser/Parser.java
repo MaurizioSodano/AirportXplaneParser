@@ -43,6 +43,7 @@ public class Parser {
 	public static final String TAXIWAY_END_BEZIER_PREFIX = "116";
 	public static final String GATE_PREFIX = "1300";
 	public static final String GATE_TYPE = "GATE";
+	public static final String TAXIWAY_NOT_ENDED_PROPERLY_110_NOT_FOUND_LINE = "TAXIWAY not ended properly (110 not found) line {}";
 
 	private String xplaneFormatVersion;
 
@@ -104,7 +105,7 @@ public class Parser {
 							airport.taxiways.add(currentTaxiway);
 							currentTaxiway = null;
 						} else {
-							logger.debug("TAXIWAY not ended properly (110 not found) line", count);
+							logger.debug(TAXIWAY_NOT_ENDED_PROPERLY_110_NOT_FOUND_LINE, count);
 						}
 						break;
 					case TAXIWAY_END_LINE_PREFIX:
@@ -113,7 +114,7 @@ public class Parser {
 							airport.taxiways.add(currentTaxiway);
 							currentTaxiway = null;
 						} else {
-							logger.debug("TAXIWAY not ended properly (110 not found) line", count);
+							logger.debug(TAXIWAY_NOT_ENDED_PROPERLY_110_NOT_FOUND_LINE, count);
 						}
 
 						break;
@@ -122,7 +123,7 @@ public class Parser {
 						if (currentTaxiway != null) {// STARTED TAXIWAY
 							currentTaxiway.closeLinearLoop();
 						} else {
-							logger.debug("TAXIWAY not ended properly (110 not found) line", count);
+							logger.debug(TAXIWAY_NOT_ENDED_PROPERLY_110_NOT_FOUND_LINE, count);
 						}
 						break;
 
@@ -152,7 +153,7 @@ public class Parser {
 	       AtomicInteger atomicInteger = new AtomicInteger(0);
 	        
 			airport.taxiways.stream()
-				.filter(ms.xplaneparser.entity.Taxiway::isCenterline)
+				.filter(ms.xplaneparser.entity.Taxiway::isCenterLine)
 				.sorted()
 				.forEach(taxiway -> {
 
@@ -160,13 +161,13 @@ public class Parser {
 					LatLong tmpTaxipoint = new LatLong(node.getLatitude(), node.getLongitude());
 					
 					
-					boolean pointExists = airport.taxipoints.values().stream()
+					boolean pointExists = airport.taxiPoints.values().stream()
 						.anyMatch(point->tmpTaxipoint.isCloseTo(point.getLatitude(),point.getLongitude()));
 					
 					if (!pointExists) {
 						atomicInteger.getAndIncrement();
 						String name=POINT_PREFIX+atomicInteger.get();
-						airport.taxipoints.put(name, tmpTaxipoint);
+						airport.taxiPoints.put(name, tmpTaxipoint);
 					}
 				});
 			});
@@ -243,12 +244,12 @@ public class Parser {
 	}
 
 	private Taxiway addLineAttribute(Taxiway currentTaxiway, String[] segments) {
-		boolean isCenterline = Arrays.asList(segments).stream().skip(1).anyMatch(LineTypes::isTaxiwayCenterline);
+		boolean isCenterline = Arrays.asList(segments).stream().skip(1).anyMatch(LineTypes::isTaxiwayCenterLine);
 		boolean isRunwayHoldPosition = Arrays.asList(segments).stream().skip(1)
 				.anyMatch(LineTypes::isRunwayHoldPosition);
 		if (currentTaxiway != null) {// STARTED TAXIWAY
 			if (isCenterline) {
-				currentTaxiway.setCenterline(true);
+				currentTaxiway.setCenterLine(true);
 			} else if (isRunwayHoldPosition) {
 				currentTaxiway.setRunwayHold(true);
 			}
@@ -308,7 +309,7 @@ public class Parser {
 	private Airport parseAirportLine(String[] segments) {
 		Airport currentAiport = new Airport();
 
-		currentAiport.ICAO = segments[4]; // Set the airports ICAO
+		currentAiport.icao = segments[4]; // Set the airports ICAO
 		currentAiport.elevation = Integer.parseInt(segments[1]);
 
 		StringBuilder sb = new StringBuilder();

@@ -8,7 +8,7 @@ import java.util.Map;
 public class Airport
 {
 	
-	public String ICAO;
+	public String icao;
 	public String country;
     public String state;
 	public String city;
@@ -16,18 +16,17 @@ public class Airport
 	public double latitude;
 	public double longitude;
 	public int elevation;
-	public boolean hasProperLatLon;
 
-    public final List<Runway> runways = new ArrayList<>();
+	public final List<Runway> runways = new ArrayList<>();
     public final List<Taxiway> taxiways = new ArrayList<>();
     public final List<Gate> gates = new ArrayList<>();
 
-    public final Map<String, LatLong> taxipoints=new HashMap<>();
+    public final Map<String, LatLong> taxiPoints =new HashMap<>();
     
     
 	public boolean isFilled()
 	{
-		if (ICAO == null)
+		if (icao == null)
 			return false;
 
 		if (airportName == null)
@@ -52,12 +51,7 @@ public class Airport
 	@Override
 	public String toString()
 	{
-		StringBuffer sb= new StringBuffer("ICAO: " + ICAO + " | Name: " + airportName + " | City: " + city + " | State: " + state + " | Country: " + country + " | Lat: " + latitude + " | Lon: " + longitude + "   | Elv: " + elevation);
-//		String runyayDescription = runways.stream()
-//			.map(Runway::toString)
-//			.collect(Collectors.joining(" "));
-//		sb.append(runyayDescription);
-		return sb.toString();
+		return "ICAO: " + icao + " | Name: " + airportName + " | City: " + city + " | State: " + state + " | Country: " + country + " | Lat: " + latitude + " | Lon: " + longitude + "   | Elv: " + elevation;
 		
 	}
 }

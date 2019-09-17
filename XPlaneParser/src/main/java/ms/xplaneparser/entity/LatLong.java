@@ -1,32 +1,15 @@
 package ms.xplaneparser.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+@AllArgsConstructor @Getter @Setter
 public class LatLong {
 	protected static final double TRESHOLD = 1e-5;
-
-	public LatLong(double latitude, double longitude) {
-		this.latitude=latitude;
-		this.longitude=longitude;
-	}
 	private double latitude;
 	private double longitude;
-	public double getLatitude() {
-		return latitude;
-	}
 
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
-	}
-
-	public double getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
-	}
-	
-	
 	@Override
 	public String toString() {
 		return "-- Lat: " +latitude +" Long: "+longitude;
