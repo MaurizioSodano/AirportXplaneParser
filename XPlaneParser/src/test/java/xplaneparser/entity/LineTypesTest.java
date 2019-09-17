@@ -13,17 +13,17 @@ public class LineTypesTest {
 	   @Test
 	   public void isTaxiwayTest() {
 		   String taxicenterline="1";
-		   assertTrue(LineTypes.isTaxiwayCenterline(taxicenterline));
+		   assertTrue(LineTypes.isTaxiwayCenterLine(taxicenterline));
 		   String taxicenterline2="101";
-		   assertTrue(LineTypes.isTaxiwayCenterline(taxicenterline2));
+		   assertTrue(LineTypes.isTaxiwayCenterLine(taxicenterline2));
 	   }
 	   
 	   
 	   @Test
 	   public void isNotTaxiwayTest() {
 		   String taxicenterline="20";
-		   assertFalse(LineTypes.isTaxiwayCenterline(taxicenterline));
+		   assertFalse(LineTypes.isTaxiwayCenterLine(taxicenterline));
 		   String taxicenterline2="";
-		   assertFalse(LineTypes.isTaxiwayCenterline(taxicenterline2));
+		   assertFalse(LineTypes.isTaxiwayCenterLine(taxicenterline2));
 	   }
 }

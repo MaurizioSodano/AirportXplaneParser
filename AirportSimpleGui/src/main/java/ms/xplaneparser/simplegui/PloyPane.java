@@ -48,10 +48,10 @@ public class PloyPane extends JPanel {
 
 		this.airport = airport;
 		addComponentListener(new ResizeListener());
-		OptionalDouble optMaxLat = airport.taxipoints.values().stream().mapToDouble(LatLong::getLatitude).max();
-		OptionalDouble optMaxLon = airport.taxipoints.values().stream().mapToDouble(LatLong::getLongitude).max();
-		OptionalDouble optMinLat = airport.taxipoints.values().stream().mapToDouble(LatLong::getLatitude).min();
-		OptionalDouble optMinLon = airport.taxipoints.values().stream().mapToDouble(LatLong::getLongitude).min();
+		OptionalDouble optMaxLat = airport.taxiPoints.values().stream().mapToDouble(LatLong::getLatitude).max();
+		OptionalDouble optMaxLon = airport.taxiPoints.values().stream().mapToDouble(LatLong::getLongitude).max();
+		OptionalDouble optMinLat = airport.taxiPoints.values().stream().mapToDouble(LatLong::getLatitude).min();
+		OptionalDouble optMinLon = airport.taxiPoints.values().stream().mapToDouble(LatLong::getLongitude).min();
 
 		maxX = optMaxLat.orElse(0.0);
 		minX = optMinLat.orElse(0.0);
