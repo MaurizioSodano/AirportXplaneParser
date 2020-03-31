@@ -1,28 +1,17 @@
 package ms.xplaneparser.simplegui;
 
-import java.awt.BorderLayout;
-import java.awt.Component;
-import java.lang.invoke.MethodHandles;
-
-import javax.swing.Box;
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.UIManager;
-import javax.swing.filechooser.FileNameExtensionFilter;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import ms.xplaneparser.entity.Airport;
 import ms.xplaneparser.entity.Gate;
 import ms.xplaneparser.entity.Runway;
 import ms.xplaneparser.entity.Taxiway;
 import ms.xplaneparser.parser.Parser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.lang.invoke.MethodHandles;
 
 public class XplaneParser extends JFrame {
 	

@@ -1,6 +1,6 @@
 # Airport Parser
 
-What is this? Its an X-Plane 11 apt.dat Java parser. 
+What is this? Its an X-Plane 11 apt.dat <del>Java</del> Kotlin parser. 
 Inspired and ported in Java from a C# project https://github.com/njbrown09/XPlaneAirportParser
 
 It could be used to parse an Xplane airport file (apt.dat)
@@ -29,4 +29,5 @@ Parses the following items:
 It displays it in a simple 2D panel
 
 ## ToDo
+1. convert in Kotlin [Done]
 

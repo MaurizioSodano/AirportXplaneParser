@@ -1,19 +1,12 @@
 package ms.xplaneparser.simplegui;
 
-import java.awt.EventQueue;
-import java.awt.Image;
-import java.awt.Toolkit;
-import java.lang.invoke.MethodHandles;
-
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import java.awt.*;
+import java.lang.invoke.MethodHandles;
 
 public class HelpAuthorFrame extends JFrame {
 
