@@ -1,22 +1,17 @@
 package ms.xplaneparser.simplegui;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
+import ms.xplaneparser.entity.Airport;
+import ms.xplaneparser.entity.LatLong;
+import ms.xplaneparser.entity.Taxiway;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalDouble;
 import java.util.Random;
-
-import javax.swing.JPanel;
-
-import ms.xplaneparser.entity.Airport;
-import ms.xplaneparser.entity.LatLong;
-import ms.xplaneparser.entity.Taxiway;
 
 public class PloyPane extends JPanel {
 
