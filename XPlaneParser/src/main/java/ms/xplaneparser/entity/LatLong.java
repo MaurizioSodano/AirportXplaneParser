@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @AllArgsConstructor @Getter @Setter
 public class LatLong {
-	protected static final double TRESHOLD = 1e-5;
+	protected static final double THRESHOLD = 1e-5;
 	private double latitude;
 	private double longitude;
 
@@ -32,6 +32,6 @@ public class LatLong {
 		double diff2;
 		diff1 = Math.abs(latitude- this.latitude);
 		diff2 = Math.abs(longitude - this.longitude);
-		return (diff1 < TRESHOLD) && (diff2 < TRESHOLD);
+		return (diff1 < THRESHOLD) && (diff2 < THRESHOLD);
 	}
 }
